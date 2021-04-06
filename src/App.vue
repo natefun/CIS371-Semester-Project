@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <h1>Personal Budgeting App</h1>
-    <h2>Nathaniel Johnson</h2>
+    <h1>Movie Ticket Sales</h1>
     <button v-if="userLoggedIn()" v-on:click="doLogout">Logout</button>
     <router-view></router-view>
   </div>
