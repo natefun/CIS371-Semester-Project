@@ -36,7 +36,7 @@ export default class AppLogin extends Vue {
         .catch((err: any) => {
             this.showMessage(`Unable to create account ${err}`);
         });
-        this.$router.push({ name: "Category" });    
+        this.$router.push({ name: "PickMovie" });    
     }
 
     authenticate(): void {
@@ -48,7 +48,7 @@ export default class AppLogin extends Vue {
         .catch((err: any) => {
             this.showMessage(`Unable to login ${err}`);
         });
-        this.$router.push({ name: "Expenses" });
+        this.$router.push({ name: "PickMovie" });
     }
 
     showMessage(m: string): void {
@@ -63,5 +63,4 @@ export default class AppLogin extends Vue {
 </script>
 
 <style>
-
 </style>

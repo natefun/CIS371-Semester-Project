@@ -8,15 +8,13 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import BudgetCategory from './components/BudgetCategory.vue';
-import MyExpense from './components/MyExpense.vue';
+import PickMovie from './components/PickMovie.vue';
 import AppLogin from './AppLogin.vue';
 import { FirebaseAuth, UserCredential } from "@firebase/auth-types";
 
 @Component({
   components: {
-    BudgetCategory,
-    MyExpense,
+    PickMovie,
     AppLogin,
   },
 })
@@ -45,12 +43,4 @@ export default class App extends Vue {
   color: #2c3e50;
   margin-top: 60px;
 }
-
-table, tr, td {
-  border: 2px solid black;
-  padding: 4px;
-  margin: 4px;
-  text-align: center;
-}
-
 </style>
