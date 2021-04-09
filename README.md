@@ -1,4 +1,4 @@
-# budgetapp
+# MovieApp
 
 ## Project setup
 ```
