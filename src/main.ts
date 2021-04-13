@@ -3,11 +3,10 @@ import App from './App.vue'
 import firebase from "firebase/app"
 import "firebase/firestore";
 import "firebase/auth";
-import VueApexCharts from "vue-apexcharts"
 import { AppRouter } from "./app-routing";
 
+
 Vue.config.productionTip = false;
-Vue.use(VueApexCharts);
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -26,8 +25,9 @@ firebase.initializeApp(firebaseConfig);
 Vue.prototype.$appAuth = firebase.auth();
 Vue.prototype.$appDB = firebase.firestore();
 
+
 new Vue({
-  router: AppRouter, 
+  router: AppRouter,
   render: h => h(App),
 }).$mount('#app')
 
