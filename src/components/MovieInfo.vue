@@ -6,20 +6,21 @@
     <button @click="goback">GoBack</button>
     <section>
       <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Year</th>
-          <th>Poster</th>
-        </tr>
-      </thead>
-      <tr v-for="(x, pos) in allMovies" :key="pos">
-        <td>{{ x.title }}</td>
-        <td>{{ x.year }}</td>
-        <td>{{ x.poster }}</td>
-      </tr>
-      <tbody></tbody>
-    </table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Poster</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(x, pos) in allMovies" :key="pos">
+            <td>{{ x.title }}</td>
+            <td>{{ x.year }}</td>
+            <td>{{ x.poster }}</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
   </section>
 </template>
@@ -63,14 +64,14 @@ export default class MovieInfo extends Vue {
         this.allMovies = movie;
         for (let i = 0; i < movie.length; i++) {
           //get image by id
-          console.log("movie[i]",movie[i])
-          console.log("allMovies",this.allMovies)
-          console.log("id",movie[i].imdb_id);
+          console.log("movie[i]", movie[i]);
+          console.log("allMovies", this.allMovies);
+          console.log("id", movie[i].imdb_id);
           this.getImage(movie[i].imdb_id)
-          //this.allMovies.poster = poster
-          .then((po:string) => {
+            //this.allMovies.poster = poster
+            .then((po: string) => {
               this.allMovies[i].poster = po;
-          })
+            });
         }
       });
   }
@@ -89,8 +90,9 @@ export default class MovieInfo extends Vue {
       })
       .then((r: AxiosResponse) => r.data)
       .then((p: any) => {
-        console.log("P in getImage", p)
-        return p.poster})
+        console.log("P in getImage", p);
+        return p.poster;
+      });
   }
 }
 </script>

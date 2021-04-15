@@ -2,8 +2,8 @@
   <div class="PopularMovies">
     <section>
       <label for="movie">Select a movie from the dropdown list</label>
-      <select id="movie" name="movie" v-model="allMovies.title">
-        <option v-for="(movie,pos) in allMovies" :key="pos">
+      <select id="movie" name="movie" v-model="selected">
+        <option v-for="(movie, pos) in allMovies" :key="pos">
           {{ movie.title }}
         </option>
       </select>
@@ -20,13 +20,13 @@
           </tr>
         </thead>
         <tbody>
-        <tr v-for="(x, pos) in allMovies" :key="pos">
-          <td>{{ x.title }}</td>
-          <td>{{ x.year }}</td>
-          <td>{{ x.imdb_id }}</td>
-          <td>{{ x.rating }}</td>
-          <td>{{ x.rated }}</td>
-        </tr>
+          <tr v-for="(x, pos) in allMovies" :key="pos">
+            <td>{{ x.title }}</td>
+            <td>{{ x.year }}</td>
+            <td>{{ x.imdb_id }}</td>
+            <td>{{ x.rating }}</td>
+            <td>{{ x.rated }}</td>
+          </tr>
         </tbody>
       </table>
     </section>
@@ -36,6 +36,10 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import axios, { AxiosResponse } from "axios";
+import { FirebaseFirestore } from "@firebase/firestore-types";
+import { FirebaseAuth } from "@firebase/auth-types";
+import { QuerySnapshot } from "@firebase/firestore-types";
+import { QueryDocumentSnapshot } from "@firebase/firestore-types";
 
 interface Movie {
   title: string;
@@ -46,9 +50,31 @@ interface Movie {
 }
 
 @Component
-export default class PopularMivies extends Vue {
+export default class PopularMovies extends Vue {
   private allMovies: Movie[] = [];
+  readonly $appDB!: FirebaseFirestore;
+  private uid = "none";
+  readonly $appAuth!: FirebaseAuth;
+  private selectedMovies: any[] = [];
+  private selected = "";
+
   mounted(): void {
+    console.log("API Key", this.$appDB.app.options_.apiKey);
+    this.uid = this.$appAuth.currentUser?.uid ?? "none";
+    this.$appDB
+      .collection(`users/${this.uid}/categories`)
+      .orderBy("name") // Sort by category name
+      .onSnapshot((qs: QuerySnapshot) => {
+        this.selectedMovies.splice(0); // remove old data
+        qs.forEach((qds: QueryDocumentSnapshot) => {
+          if (qds.exists) {
+            const catData = qds.data();
+            this.selectedMovies.push({
+              selected: catData.selected,
+            });
+          }
+        });
+      });
     axios
       .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
         params: { type: "get-popular-movies", page: "1", year: "2020" },
@@ -61,22 +87,26 @@ export default class PopularMivies extends Vue {
       .then((r: AxiosResponse) => r.data)
       .then((p: any) => p.movie_results)
       .then((movieInfo: Movie[]) => {
-         this.allMovies = movieInfo;
+        this.allMovies = movieInfo;
         for (let x = 0; x < this.allMovies.length; x++) {
-           this.getpop(this.allMovies[x].imdb_id)
-          .then((mmm: any[]) =>{
+          this.getpop(this.allMovies[x].imdb_id).then((mmm: any[]) => {
             this.allMovies[x].rating = mmm[0];
             this.allMovies[x].rated = mmm[1];
-          })
+          });
         }
       });
-      
+  }
+  submit() {
+    console.log("Submit");
+    this.$appDB
+        .collection(`users/${this.uid}/categories`)
+        .add({title: this.selected})
   }
   goback() {
     this.$router.back();
   }
   async getpop(id: string) {
-    return  axios
+    return axios
       .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
         params: {
           type: "get-movie-details",
@@ -90,15 +120,11 @@ export default class PopularMivies extends Vue {
       })
       .then((r: AxiosResponse) => r.data)
       .then((p: any) => {
-       return [p.imdb_rating, p.rated];
+        return [p.imdb_rating, p.rated];
       });
-      
   }
-  submit() {
-  console.log("Submit");
+  
 }
-}
-
 </script>
 
 <style scoped>
