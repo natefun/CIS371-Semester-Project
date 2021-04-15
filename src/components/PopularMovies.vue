@@ -1,7 +1,14 @@
 <template>
   <div class="PopularMovies">
     <section>
+      <label for="movie">Select a movie from the dropdown list</label>
+      <select id="movie" name="movie" v-model="allMovies.title">
+        <option v-for="(movie,pos) in allMovies" :key="pos">
+          {{ movie.title }}
+        </option>
+      </select>
       <button @click="goback">GoBack</button>
+      <button @click="submit">Submit</button>
       <table>
         <thead>
           <tr>
@@ -12,6 +19,7 @@
             <th>Rated</th>
           </tr>
         </thead>
+        <tbody>
         <tr v-for="(x, pos) in allMovies" :key="pos">
           <td>{{ x.title }}</td>
           <td>{{ x.year }}</td>
@@ -19,7 +27,7 @@
           <td>{{ x.rating }}</td>
           <td>{{ x.rated }}</td>
         </tr>
-        <tbody></tbody>
+        </tbody>
       </table>
     </section>
   </div>
@@ -55,20 +63,20 @@ export default class PopularMivies extends Vue {
       .then((movieInfo: Movie[]) => {
          this.allMovies = movieInfo;
         for (let x = 0; x < this.allMovies.length; x++) {
-          const sth = this.getpop(this.allMovies[x].imdb_id)
+           this.getpop(this.allMovies[x].imdb_id)
           .then((mmm: any[]) =>{
-            movieInfo[x].rating = mmm[0];
-            movieInfo[x].rated = mmm[1];
+            this.allMovies[x].rating = mmm[0];
+            this.allMovies[x].rated = mmm[1];
           })
-          
         }
       });
+      
   }
   goback() {
     this.$router.back();
   }
   async getpop(id: string) {
-    return await axios
+    return  axios
       .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
         params: {
           type: "get-movie-details",
@@ -86,7 +94,11 @@ export default class PopularMivies extends Vue {
       });
       
   }
+  submit() {
+  console.log("Submit");
 }
+}
+
 </script>
 
 <style scoped>
