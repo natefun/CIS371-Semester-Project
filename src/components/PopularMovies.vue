@@ -17,6 +17,7 @@
             <th>Imbd_ID</th>
             <th>Rating</th>
             <th>Rated</th>
+            <th>Price</th>
           </tr>
         </thead>
         <tbody>
@@ -26,6 +27,12 @@
             <td>{{ x.imdb_id }}</td>
             <td>{{ x.rating }}</td>
             <td>{{ x.rated }}</td>
+            <template v-if="x.year > 2015">
+              <td>30</td>
+            </template>
+            <template v-else>
+              <td>10</td>
+            </template>
           </tr>
         </tbody>
       </table>
@@ -57,6 +64,7 @@ export default class PopularMovies extends Vue {
   readonly $appAuth!: FirebaseAuth;
   private selectedMovies: any[] = [];
   private selected = "";
+  private price = 30;
 
   mounted(): void {
     console.log("API Key", this.$appDB.app.options_.apiKey);
@@ -99,8 +107,9 @@ export default class PopularMovies extends Vue {
   submit() {
     console.log("Submit");
     this.$appDB
-        .collection(`users/${this.uid}/categories`)
-        .add({title: this.selected})
+      .collection(`users/${this.uid}/categories`)
+      .add({ title: this.selected, price: this.price });
+      this.$router.push({ name: "SelectedMovies" });
   }
   goback() {
     this.$router.back();
@@ -123,7 +132,6 @@ export default class PopularMovies extends Vue {
         return [p.imdb_rating, p.rated];
       });
   }
-  
 }
 </script>
 

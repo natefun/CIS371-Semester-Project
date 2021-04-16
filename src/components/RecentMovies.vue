@@ -65,8 +65,9 @@ export default class RecentMovies extends Vue {
   submit() {
     console.log("Submit");
     this.$appDB
-        .collection(`users/${this.uid}/categories`)
-        .add({title: this.selected, price: this.price})
+        .collection(`users/${this.uid}/categories`).doc(this.selected)
+        .set({title: this.selected, price: this.price})
+    this.$router.push({ name: "SelectedMovies" });
   }
   mounted(): void {
     console.log("API Key", this.$appDB.app.options_.apiKey);

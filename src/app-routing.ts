@@ -2,9 +2,10 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import UserLogin from "./AppLogin.vue";
 import PickMovie from "./components/PickMovie.vue";
-import PopularMovies from "./components/PopularMovies.vue"
-import RecentMovies from "./components/RecentMovies.vue"
-import MovieInfo from "./components/MovieInfo.vue"
+import PopularMovies from "./components/PopularMovies.vue";
+import RecentMovies from "./components/RecentMovies.vue";
+import MovieInfo from "./components/MovieInfo.vue";
+import SelectedMovies from "./components/SelectedMovies.vue";
 Vue.use(VueRouter);
 
 const myRoutes: Array<RouteConfig> = [
@@ -18,21 +19,25 @@ const myRoutes: Array<RouteConfig> = [
     path: "/PickMovie",
     component: PickMovie,
   },
-  { name: "PopularMovies",
+  {
+    name: "PopularMovies",
     path: "/PickMovie/PopularMovies",
     component: PopularMovies,
   },
-  { name: "RecentMovies",
+  {
+    name: "RecentMovies",
     path: "/PickMovie/RecentMovies",
     component: RecentMovies,
   },
-  { name: "MovieInfo",
-    path: "/PickMovie/MovieInfo",
-    component: MovieInfo,
+  { name: "MovieInfo", path: "/PickMovie/MovieInfo", component: MovieInfo },
+  {
+    name: "SelectedMovies",
+    path: "/PickMovie/SelectedMovies",
+    component: SelectedMovies,
   },
 ];
 
-export const AppRouter = new VueRouter({ 
-  routes: myRoutes, 
-  mode: "history" 
-});  
+export const AppRouter = new VueRouter({
+  routes: myRoutes,
+  mode: "history",
+});
