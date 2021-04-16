@@ -107,9 +107,9 @@ export default class PopularMovies extends Vue {
   submit() {
     console.log("Submit");
     this.$appDB
-      .collection(`users/${this.uid}/categories`)
-      .add({ title: this.selected, price: this.price });
-      this.$router.push({ name: "SelectedMovies" });
+        .collection(`users/${this.uid}/categories`).doc(this.selected)
+        .set({title: this.selected, price: this.price})
+    this.$router.push({ name: "SelectedMovies" });
   }
   goback() {
     this.$router.back();

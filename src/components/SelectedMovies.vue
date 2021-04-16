@@ -80,6 +80,26 @@ export default class selectedMovies extends Vue {
     this.$appDB
     .doc(`users/${this.uid}/categories/${this.selected}`)
     .delete();
+        this.uid = this.$appAuth.currentUser?.uid ?? "none";
+    this.$appDB
+      .collection(`users/${this.uid}/categories`)
+      .orderBy("title") // Sort by category name
+      .get()
+      .then((qs: QuerySnapshot) => {
+        this.selectedMovies.splice(0); // remove old data
+        qs.forEach((qds: QueryDocumentSnapshot) => {
+          if (qds.exists) {
+            const catData = qds.data();
+            this.selectedMovies.push({
+              title: catData.title,
+              price: catData.price,
+              year: 0,
+              imdb_id: "",
+              poster: "",
+            });
+          }
+        });
+      });
   }
 }
 </script>
