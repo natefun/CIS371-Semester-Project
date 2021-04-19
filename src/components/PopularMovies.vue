@@ -7,8 +7,8 @@
           {{ movie.title }}
         </option>
       </select>
-      <button @click="goback">GoBack</button>
-      <button @click="submit">Submit</button>
+      <button @click="goback" href="#" class="myButton">GoBack</button>
+      <button @click="submit" href="#" class="myButton">Submit</button>
       <table>
         <thead>
           <tr>
@@ -141,4 +141,12 @@ th,
 td {
   border: 1px solid black;
 }
+tr:nth-child(even)
+  {
+    background-color: orange;
+  }
+  tr:nth-child(odd)
+  {
+    background-color: greenyellow;
+  }
 </style>

@@ -2,8 +2,8 @@
   <section>
     <h1>Search a Movie</h1>
     Search By Movie Name <br /><input type="text" v-model="movieName" /><br />
-    <button @click="getImage">Go</button>
-    <button @click="goback">GoBack</button>
+    <button @click="getImage" href="#" class="myButton">Go</button>
+    <button @click="goback" href="#" class="myButton">GoBack</button>
     <section>
       <table>
         <thead>
@@ -102,4 +102,12 @@ th,
 td {
   border: 1px solid black;
 }
+tr:nth-child(even)
+  {
+    background-color: rgb(151, 208, 212);
+  }
+tr:nth-child(odd)
+  {
+    background-color: rgb(213, 216, 62);
+  }
 </style>

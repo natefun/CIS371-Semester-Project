@@ -2,10 +2,11 @@
   <div id="pick">
     <section>
       <h1>Select a Movie</h1> 
-      <button @click="popular">Select a popular movie</button>
-      <button @click="recentMovies">Select a recently added movie</button>
-      <button @click="getMovieinfo">Get Information from a movie</button><br>
-      <button @click="logout">Logout</button>
+      <button @click="popular" href="#" class="myButton">Select a popular movie</button>
+      <button @click="recentMovies" href="#" class="myButton">Select a recently added movie</button>
+      <button @click="getMovieinfo" href="#" class="myButton">Get Information from a movie</button><br>
+      <button @click="logout" href="#" class="myButton">Logout</button>
+      <button @click="list" href="#" class="myButton">Movie Selected List</button>
       <router-view></router-view>
     </section>
     <section></section>
@@ -65,7 +66,13 @@ export default class PickMovie extends Vue {
   getMovieinfo(): void {
   this.$router.push({ name: "MovieInfo" });
   }
+  list(): void {
+    this.$router.push({ name: "SelectedMovies" });
+  }
 }
+
+
 </script>
 
-<style></style>
+<style>
+</style>

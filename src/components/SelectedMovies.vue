@@ -7,8 +7,8 @@
         {{ movie.title }}
       </option>
     </select>
-    <button @click="deleteMovie">Delete</button>
-    <button @click="goback">GoBack</button>
+    <button @click="deleteMovie" href="#" class="myButton">Delete</button>
+    <button @click="goback" href="#" class="myButton">GoBack</button>
     <section>
       <table>
         <thead>
@@ -109,4 +109,13 @@ th,
 td {
   border: 1px solid black;
 }
+
+tr:nth-child(even)
+  {
+    background-color: rgb(119, 241, 180);
+  }
+tr:nth-child(odd)
+  {
+    background-color: rgb(230, 250, 159);
+  }
 </style>
