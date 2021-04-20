@@ -6,6 +6,7 @@ import PopularMovies from "./components/PopularMovies.vue";
 import RecentMovies from "./components/RecentMovies.vue";
 import MovieInfo from "./components/MovieInfo.vue";
 import SelectedMovies from "./components/SelectedMovies.vue";
+import RandomMovies from "./components/RandomMovies.vue";
 Vue.use(VueRouter);
 
 const myRoutes: Array<RouteConfig> = [
@@ -34,6 +35,12 @@ const myRoutes: Array<RouteConfig> = [
     name: "SelectedMovies",
     path: "/PickMovie/SelectedMovies",
     component: SelectedMovies,
+  },
+  
+  {
+    name: "RandomMovies",
+    path: "/PickMovie/RandomMovies",
+    component: RandomMovies,
   },
 ];
 

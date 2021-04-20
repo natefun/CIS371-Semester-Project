@@ -15,8 +15,6 @@
             <th>Title</th>
             <th>Year</th>
             <th>Imbd_ID</th>
-            <th>Rating</th>
-            <th>Rated</th>
             <th>Price</th>
           </tr>
         </thead>
@@ -25,8 +23,6 @@
             <td>{{ x.title }}</td>
             <td>{{ x.year }}</td>
             <td>{{ x.imdb_id }}</td>
-            <td>{{ x.rating }}</td>
-            <td>{{ x.rated }}</td>
             <template v-if="x.year > 2015">
               <td>30</td>
             </template>
@@ -52,8 +48,7 @@ interface Movie {
   title: string;
   year: number;
   imdb_id: string;
-  rating: number;
-  rated: string;
+  price: number;
 }
 
 @Component
@@ -82,9 +77,10 @@ export default class PopularMovies extends Vue {
             });
           }
         });
-        axios
+      });
+    axios
       .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
-        params: { type: "get-popular-movies", page: "1", year: "2020" },
+        params: { type: "get-random-movies", page: "1" },
         headers: {
           "x-rapidapi-key":
             "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
@@ -95,15 +91,12 @@ export default class PopularMovies extends Vue {
       .then((p: any) => p.movie_results)
       .then((movieInfo: Movie[]) => {
         this.allMovies = movieInfo;
-        for (let x = 0; x < this.allMovies.length; x++) {
-          this.getpop(this.allMovies[x].imdb_id).then((mmm: any[]) => {
-            this.allMovies[x].rating = mmm[0];
-            this.allMovies[x].rated = mmm[1];
-          });
+        for(let x in movieInfo){
+            if(movieInfo[x].year < 2015){
+                this.price = 10
+            }else {this.price = 30}
         }
       });
-      });
-    
   }
   submit() {
     console.log("Submit");
@@ -115,24 +108,7 @@ export default class PopularMovies extends Vue {
   goback() {
     this.$router.back();
   }
-  async getpop(id: string) {
-    return axios
-      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
-        params: {
-          type: "get-movie-details",
-          imdb: id,
-        },
-        headers: {
-          "x-rapidapi-key":
-            "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
-          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
-        },
-      })
-      .then((r: AxiosResponse) => r.data)
-      .then((p: any) => {
-        return [p.imdb_rating, p.rated];
-      });
-  }
+  
 }
 </script>
 

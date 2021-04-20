@@ -1,39 +1,45 @@
 <template>
-<div class="RecentMovies">
-  <section>
-    <h1>RecentMovies</h1>
-    <label for="movie">Select a movie from the dropdown list</label>
+  <div class="PopularMovies">
+    <section>
+      <label for="movie">Select a movie from the dropdown list</label>
       <select id="movie" name="movie" v-model="selected">
         <option v-for="(movie, pos) in allMovies" :key="pos">
           {{ movie.title }}
         </option>
       </select>
-    <button @click="goback" href="#" class="myButton">GoBack</button>
-    <button @click="submit" href="#" class="myButton">Submit</button>
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Year</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(x, pos) in allMovies" :prop="x" :key="pos">
-        <td>{{ x.title }}</td>
-        <td>{{ x.year }}</td>
-        <template v-if="x.year>2015">
-        <td>30</td>
-        </template>
-        <template v-else>
-        <td>10</td>
-        </template>
-      </tr>
-      </tbody>
-    </table>
-  </section>
-</div>
+      <button @click="goback" href="#" class="myButton">GoBack</button>
+      <button @click="submit" href="#" class="myButton">Submit</button>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Imbd_ID</th>
+            <th>Rating</th>
+            <th>Rated</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(x, pos) in allMovies" :key="pos">
+            <td>{{ x.title }}</td>
+            <td>{{ x.year }}</td>
+            <td>{{ x.imdb_id }}</td>
+            <td>{{ x.rating }}</td>
+            <td>{{ x.rated }}</td>
+            <template v-if="x.year > 2015">
+              <td>30</td>
+            </template>
+            <template v-else>
+              <td>10</td>
+            </template>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
 </template>
+
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import axios, { AxiosResponse } from "axios";
@@ -46,11 +52,12 @@ interface Movie {
   title: string;
   year: number;
   imdb_id: string;
-  rating: string;
+  rating: number;
   rated: string;
 }
+
 @Component
-export default class RecentMovies extends Vue {
+export default class PopularMovies extends Vue {
   private allMovies: Movie[] = [];
   readonly $appDB!: FirebaseFirestore;
   private uid = "none";
@@ -59,16 +66,6 @@ export default class RecentMovies extends Vue {
   private selected = "";
   private price = 30;
 
-  goback() {
-    this.$router.back();
-  }
-  submit() {
-    console.log("Submit");
-    this.$appDB
-        .collection(`users/${this.uid}/categories`).doc(this.selected)
-        .set({title: this.selected, price: this.price})
-    this.$router.push({ name: "SelectedMovies" });
-  }
   mounted(): void {
     console.log("API Key", this.$appDB.app.options_.apiKey);
     this.uid = this.$appAuth.currentUser?.uid ?? "none";
@@ -82,17 +79,12 @@ export default class RecentMovies extends Vue {
             const catData = qds.data();
             this.selectedMovies.push({
               selected: catData.selected,
-              price: catData.price
             });
           }
         });
-      });
-    axios
+        axios
       .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
-        params: {
-          type: "get-nowplaying-movies",
-          page: "1",
-        },
+        params: { type: "get-popular-movies", page: "1", year: "2020" },
         headers: {
           "x-rapidapi-key":
             "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
@@ -103,10 +95,47 @@ export default class RecentMovies extends Vue {
       .then((p: any) => p.movie_results)
       .then((movieInfo: Movie[]) => {
         this.allMovies = movieInfo;
+        for (let x = 0; x < this.allMovies.length; x++) {
+          this.getpop(this.allMovies[x].imdb_id).then((mmm: any[]) => {
+            this.allMovies[x].rating = mmm[0];
+            this.allMovies[x].rated = mmm[1];
+          });
+        }
+      });
+      });
+    
+  }
+  submit() {
+    console.log("Submit");
+    this.$appDB
+        .collection(`users/${this.uid}/categories`).doc(this.selected)
+        .set({title: this.selected, price: this.price})
+    this.$router.push({ name: "SelectedMovies" });
+  }
+  goback() {
+    this.$router.back();
+  }
+  async getpop(id: string) {
+    return axios
+      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
+        params: {
+          type: "get-movie-details",
+          imdb: id,
+        },
+        headers: {
+          "x-rapidapi-key":
+            "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
+          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
+        },
+      })
+      .then((r: AxiosResponse) => r.data)
+      .then((p: any) => {
+        return [p.imdb_rating, p.rated];
       });
   }
 }
 </script>
+
 <style scoped>
 table,
 th,
@@ -115,10 +144,10 @@ td {
 }
 tr:nth-child(even)
   {
-    background-color: burlywood;
+    background-color: orange;
   }
-tr:nth-child(odd)
+  tr:nth-child(odd)
   {
-    background-color: skyblue;
+    background-color: greenyellow;
   }
 </style>

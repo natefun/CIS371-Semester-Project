@@ -23,6 +23,12 @@
             <td>{{ x.price }}</td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <td>Total</td>
+            <td>{{total}}</td>
+          </tr>
+        </tfoot>
       </table>
     </section>
   </section>
@@ -50,6 +56,7 @@ export default class selectedMovies extends Vue {
   private uid = "none";
   readonly $appAuth!: FirebaseAuth;
   private selected = "";
+  private total = 0;
 
   goback() {
     this.$router.back();
@@ -74,7 +81,10 @@ export default class selectedMovies extends Vue {
             });
           }
         });
-      });
+        for(const x in this.selectedMovies){
+          this.total += this.selectedMovies[x].price;
+        }
+      });   
   }
   deleteMovie() {
     this.$appDB

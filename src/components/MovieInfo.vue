@@ -2,7 +2,7 @@
   <section>
     <h1>Search a Movie</h1>
     Search By Movie Name <br /><input type="text" v-model="movieName" /><br />
-    <button @click="getImage" href="#" class="myButton">Go</button>
+    <button @click="go" href="#" class="myButton">Go</button>
     <button @click="goback" href="#" class="myButton">GoBack</button>
     <section>
       <table>
@@ -17,7 +17,8 @@
           <tr v-for="(x, pos) in allMovies" :key="pos">
             <td>{{ x.title }}</td>
             <td>{{ x.year }}</td>
-            <td>{{ x.poster }}</td>
+            <td img src="x.poster"></td>
+
           </tr>
         </tbody>
       </table>
@@ -92,6 +93,37 @@ export default class MovieInfo extends Vue {
       .then((p: any) => {
         console.log("P in getImage", p);
         return p.poster;
+      });
+  }
+  go() {
+    axios
+      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
+        params: {
+          type: "get-movies-by-title",
+          title: this.movieName,
+        },
+        headers: {
+          "x-rapidapi-key":
+            "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
+          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
+        },
+      })
+      .then((r: AxiosResponse) => r.data)
+      .then((p: any) => p.movie_results)
+      .then((movie: any[]) => {
+        console.log(movie);
+        this.allMovies = movie;
+        for (let i = 0; i < movie.length; i++) {
+          //get image by id
+          console.log("movie[i]", movie[i]);
+          console.log("allMovies", this.allMovies);
+          console.log("id", movie[i].imdb_id);
+          this.getImage(movie[i].imdb_id)
+            //this.allMovies.poster = poster
+            .then((po: string) => {
+              this.allMovies[i].poster = po;
+            });
+        }
       });
   }
 }

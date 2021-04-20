@@ -4,7 +4,8 @@
       <h1>Select a Movie</h1> 
       <button @click="popular" href="#" class="myButton">Select a popular movie</button>
       <button @click="recentMovies" href="#" class="myButton">Select a recently added movie</button>
-      <button @click="getMovieinfo" href="#" class="myButton">Get Information from a movie</button><br>
+      <button @click="getMovieinfo" href="#" class="myButton">Get Information from a movie</button>
+      <button @click="getrand" href="#" class="myButton">Get a Random Movie</button><br>
       <button @click="logout" href="#" class="myButton">Logout</button>
       <button @click="list" href="#" class="myButton">Movie Selected List</button>
       <router-view></router-view>
@@ -68,6 +69,9 @@ export default class PickMovie extends Vue {
   }
   list(): void {
     this.$router.push({ name: "SelectedMovies" });
+  }
+  getrand(): void {
+    this.$router.push({ name: "RandomMovies" });
   }
 }
 
