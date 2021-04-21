@@ -67,4 +67,7 @@ export default class App extends Vue {
 	position:relative;
 	top:1px;
 }
+table {
+  margin: auto auto;
+}
 </style>
