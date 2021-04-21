@@ -17,7 +17,7 @@
           <tr v-for="(x, pos) in allMovies" :key="pos">
             <td>{{ x.title }}</td>
             <td>{{ x.year }}</td>
-            <td img src="x.poster"></td>
+            <td><img :src="x.poster" alt="No Poster Availible" width="200" height="300"></td>
 
           </tr>
         </tbody>
