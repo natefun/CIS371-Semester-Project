@@ -1,5 +1,6 @@
 <template>
-  <div id="app" :style="{backgroundImage:'url(https://media.istockphoto.com/photos/paper-cup-with-a-popcorn-on-white-picture-id1160441778?k=6&m=1160441778&s=612x612&w=0&h=4ao1AKLeDLTh1fZKp-cSq7oRmq7u94REMnSc7JWj3PE=)'}">
+  <div id="app">
+    &nbsp;
     <h1>Movie Ticket Sales</h1>
     <button v-if="userLoggedIn()" v-on:click="doLogout">Logout</button>
     <router-view></router-view>
@@ -35,6 +36,16 @@ export default class App extends Vue {
 </script>
 
 <style>
+body, html {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+body {
+  background-image: url("https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/popcorn-closeup-1527781214.jpg");
+  background-color: #cccccc;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
