@@ -9,6 +9,7 @@
       </select>
       <button @click="goback" href="#" class="myButton">GoBack</button>
       <button @click="submit" href="#" class="myButton">Submit</button>
+      <button @click="change" href="#" class="myButton">Change Movies</button>
       <table>
         <thead>
           <tr>
@@ -52,7 +53,7 @@ interface Movie {
 }
 
 @Component
-export default class PopularMovies extends Vue {
+export default class RandomMovies extends Vue {
   private allMovies: Movie[] = [];
   readonly $appDB!: FirebaseFirestore;
   private uid = "none";
@@ -80,7 +81,7 @@ export default class PopularMovies extends Vue {
       });
     axios
       .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
-        params: { type: "get-random-movies", page: "1" },
+        params: { type: "get-random-movies", page: 1 },
         headers: {
           "x-rapidapi-key":
             "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
@@ -91,24 +92,66 @@ export default class PopularMovies extends Vue {
       .then((p: any) => p.movie_results)
       .then((movieInfo: Movie[]) => {
         this.allMovies = movieInfo;
-        for(let x in movieInfo){
-            if(movieInfo[x].year < 2015){
-                this.price = 10
-            }else {this.price = 30}
+        for (let x in movieInfo) {
+          if (movieInfo[x].year < 2015) {
+            this.price = 10;
+          } else {
+            this.price = 30;
+          }
+        }
+      });
+  }
+  change() {
+    this.uid = this.$appAuth.currentUser?.uid ?? "none";
+    
+    this.$appDB
+      .collection(`users/${this.uid}/categories`)
+      .orderBy("name") // Sort by category name
+      .onSnapshot((qs: QuerySnapshot) => {
+        this.selectedMovies.splice(0); // remove old data
+        qs.forEach((qds: QueryDocumentSnapshot) => {
+          if (qds.exists) {
+            const catData = qds.data();
+            this.selectedMovies.push({
+              selected: catData.selected,
+            });
+          }
+        });
+      });
+    axios
+      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
+        params: { type: "get-random-movies", page: Math.floor(Math.random() * 5630) },
+        headers: {
+          "x-rapidapi-key":
+            "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
+          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
+        },
+      })
+      .then((r: AxiosResponse) => r.data)
+      .then((p: any) => p.movie_results)
+      .then((movieInfo: Movie[]) => {
+        this.allMovies.splice(0);
+        this.allMovies = movieInfo;
+        for (let x in movieInfo) {
+          if (movieInfo[x].year < 2015) {
+            this.price = 10;
+          } else {
+            this.price = 30;
+          }
         }
       });
   }
   submit() {
     console.log("Submit");
     this.$appDB
-        .collection(`users/${this.uid}/categories`).doc(this.selected)
-        .set({title: this.selected, price: this.price})
+      .collection(`users/${this.uid}/categories`)
+      .doc(this.selected)
+      .set({ title: this.selected, price: this.price });
     this.$router.push({ name: "SelectedMovies" });
   }
   goback() {
     this.$router.back();
   }
-  
 }
 </script>
 
@@ -118,12 +161,10 @@ th,
 td {
   border: 1px solid black;
 }
-tr:nth-child(even)
-  {
-    background-color: orange;
-  }
-  tr:nth-child(odd)
-  {
-    background-color: greenyellow;
-  }
+tr:nth-child(even) {
+  background-color: orange;
+}
+tr:nth-child(odd) {
+  background-color: greenyellow;
+}
 </style>
