@@ -15,10 +15,16 @@
         </thead>
         <tbody>
           <tr v-for="(x, pos) in allMovies" :key="pos">
-            <td>{{ x.title }}</td>
-            <td>{{ x.year }}</td>
-            <td><img :src="x.poster" alt="No Poster Availible" width="200" height="300"></td>
-
+            <td>{{ x.Title }}</td>
+            <td>{{ x.Year }}</td>
+            <td>
+              <img
+                :src="x.Poster"
+                alt="No Poster Availible"
+                width="200"
+                height="300"
+              />
+            </td>
           </tr>
         </tbody>
       </table>
@@ -30,10 +36,10 @@ import axios, { AxiosResponse } from "axios";
 import { Component, Vue } from "vue-property-decorator";
 
 interface Movie {
-  title: string;
-  year: number;
-  imdb_id: string;
-  poster: string;
+  Title: string;
+  Year: number;
+  imdbID: string;
+  Poster: string;
 }
 @Component
 export default class MovieInfo extends Vue {
@@ -47,82 +53,55 @@ export default class MovieInfo extends Vue {
   }
   mounted(): void {
     axios
-      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
+      .get("https://movie-database-imdb-alternative.p.rapidapi.com/", {
         params: {
-          type: "get-movies-by-title",
-          title: this.movieName,
+          s: this.movieName,
+          page: "1",
+          r: "json",
         },
         headers: {
           "x-rapidapi-key":
             "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
-          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
+          "x-rapidapi-host": "movie-database-imdb-alternative.p.rapidapi.com",
         },
       })
       .then((r: AxiosResponse) => r.data)
-      .then((p: any) => p.movie_results)
+      .then((p: any) => p.Search)
       .then((movie: any[]) => {
-        console.log(movie);
         this.allMovies = movie;
         for (let i = 0; i < movie.length; i++) {
           //get image by id
           console.log("movie[i]", movie[i]);
           console.log("allMovies", this.allMovies);
           console.log("id", movie[i].imdb_id);
-          this.getImage(movie[i].imdb_id)
-            //this.allMovies.poster = poster
-            .then((po: string) => {
-              this.allMovies[i].poster = po;
-            });
+          //this.allMovies.poster = poster
+          
         }
-      });
-  }
-  async getImage(id: string) {
-    return await axios
-      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
-        params: {
-          type: "get-movies-images-by-imdb",
-          imdb: id,
-        },
-        headers: {
-          "x-rapidapi-key":
-            "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
-          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
-        },
-      })
-      .then((r: AxiosResponse) => r.data)
-      .then((p: any) => {
-        console.log("P in getImage", p);
-        return p.poster;
       });
   }
   go() {
     axios
-      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
+      .get("https://movie-database-imdb-alternative.p.rapidapi.com/", {
         params: {
-          type: "get-movies-by-title",
-          title: this.movieName,
+          s: this.movieName,
+          page: "1",
+          r: "json",
         },
         headers: {
           "x-rapidapi-key":
             "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
-          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
+          "x-rapidapi-host": "movie-database-imdb-alternative.p.rapidapi.com",
         },
       })
       .then((r: AxiosResponse) => r.data)
-      .then((p: any) => p.movie_results)
+      .then((p: any) => p.Search)
       .then((movie: any[]) => {
-        console.log(movie);
         this.allMovies = movie;
         for (let i = 0; i < movie.length; i++) {
           //get image by id
           console.log("movie[i]", movie[i]);
           console.log("allMovies", this.allMovies);
           console.log("id", movie[i].imdb_id);
-          this.getImage(movie[i].imdb_id)
-            //this.allMovies.poster = poster
-            .then((po: string) => {
-              this.allMovies[i].poster = po;
-            });
         }
       });
   }
@@ -132,14 +111,13 @@ export default class MovieInfo extends Vue {
 table,
 th,
 td {
+  position: relative;
   border: 1px solid black;
 }
-tr:nth-child(even)
-  {
-    background-color: rgb(151, 208, 212);
-  }
-tr:nth-child(odd)
-  {
-    background-color: rgb(213, 216, 62);
-  }
+tr:nth-child(even) {
+  background-color: rgb(151, 208, 212);
+}
+tr:nth-child(odd) {
+  background-color: rgb(213, 216, 62);
+}
 </style>

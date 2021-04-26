@@ -15,7 +15,7 @@
             <th>Title</th>
             <th>Year</th>
             <th>Imbd_ID</th>
-            <th>Rating</th>
+            <th>Released</th>
             <th>Rated</th>
             <th>Price</th>
           </tr>
@@ -25,7 +25,7 @@
             <td>{{ x.title }}</td>
             <td>{{ x.year }}</td>
             <td>{{ x.imdb_id }}</td>
-            <td>{{ x.rating }}</td>
+            <td>{{ x.released }}</td>
             <td>{{ x.rated }}</td>
             <template v-if="x.year > 2015">
               <td>30</td>
@@ -52,7 +52,7 @@ interface Movie {
   title: string;
   year: number;
   imdb_id: string;
-  rating: number;
+  released: string;
   rated: string;
 }
 
@@ -67,7 +67,29 @@ export default class PopularMovies extends Vue {
   private price = 30;
 
   mounted(): void {
-    console.log("API Key", this.$appDB.app.options_.apiKey);
+    axios
+      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
+        params: { type: "get-popular-movies", page: "1", year: "2020" },
+        headers: {
+          "x-rapidapi-key":
+            "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
+          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
+        },
+      })
+      .then((r: AxiosResponse) => r.data)
+      .then((p: any) => p.movie_results)
+      .then((movieInfo: any[]) => {
+        console.log("movieInfo", movieInfo);
+        this.allMovies = movieInfo;
+        for (let x = 0; x < this.allMovies.length; x++) {
+          this.getpop(this.allMovies[x].imdb_id).then((mmm: any[]) => {
+            this.allMovies[x].rated = mmm[0];
+            this.allMovies[x].released = mmm[1];
+          });
+          console.log("Clone",Object.assign({}, this.allMovies[x]));
+        }
+      });
+    //console.log("API Key", this.$appDB.app.options_.apiKey);
     this.uid = this.$appAuth.currentUser?.uid ?? "none";
     this.$appDB
       .collection(`users/${this.uid}/categories`)
@@ -82,56 +104,36 @@ export default class PopularMovies extends Vue {
             });
           }
         });
-        axios
-      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
-        params: { type: "get-popular-movies", page: "1", year: "2020" },
-        headers: {
-          "x-rapidapi-key":
-            "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
-          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
-        },
-      })
-      .then((r: AxiosResponse) => r.data)
-      .then((p: any) => p.movie_results)
-      .then((movieInfo: Movie[]) => {
-        this.allMovies = movieInfo;
-        for (let x = 0; x < this.allMovies.length; x++) {
-          this.getpop(this.allMovies[x].imdb_id).then((mmm: any[]) => {
-            this.allMovies[x].rating = mmm[0];
-            this.allMovies[x].rated = mmm[1];
-          });
-        }
       });
-      });
-    
   }
   submit() {
     console.log("Submit");
     this.$appDB
-        .collection(`users/${this.uid}/categories`).doc(this.selected)
-        .set({title: this.selected, price: this.price})
+      .collection(`users/${this.uid}/categories`)
+      .doc(this.selected)
+      .set({ title: this.selected, price: this.price });
     this.$router.push({ name: "SelectedMovies" });
   }
   goback() {
     this.$router.back();
   }
   async getpop(id: string) {
-    return axios
-      .get("https://movies-tvshows-data-imdb.p.rapidapi.com/", {
+    const r = await axios.get(
+      "https://movie-database-imdb-alternative.p.rapidapi.com/",
+      {
         params: {
-          type: "get-movie-details",
-          imdb: id,
+          i: id,
+          r: "json",
         },
         headers: {
           "x-rapidapi-key":
             "ae7d7525edmshe28bd6a6eef3638p14f263jsnb3486bf90e1b",
-          "x-rapidapi-host": "movies-tvshows-data-imdb.p.rapidapi.com",
+          "x-rapidapi-host": "movie-database-imdb-alternative.p.rapidapi.com",
         },
-      })
-      .then((r: AxiosResponse) => r.data)
-      .then((p: any) => {
-        return [p.imdb_rating, p.rated];
-      });
+      }
+    );
+    const p = r.data;
+    return [p.Rated,p.Released];
   }
 }
 </script>
@@ -142,12 +144,10 @@ th,
 td {
   border: 1px solid black;
 }
-tr:nth-child(even)
-  {
-    background-color: orange;
-  }
-  tr:nth-child(odd)
-  {
-    background-color: greenyellow;
-  }
+tr:nth-child(even) {
+  background-color: orange;
+}
+tr:nth-child(odd) {
+  background-color: greenyellow;
+}
 </style>
